@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Fraction Comparison Worksheet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .controls {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            color: white;
+        }
+
+        .controls h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .btn-success {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #45a049;
+        }
+
+        .worksheet {
+            padding: 40px;
+        }
+
+        .worksheet-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .worksheet-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .worksheet-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .score-display {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f5f5f5;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .score-correct {
+            color: #4caf50;
+        }
+
+        .score-incorrect {
+            color: #f44336;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px 40px;
+        }
+
+        .problem {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s;
+            page-break-inside: avoid;
+        }
+
+        .problem:hover {
+            background: #f5f5f5;
+        }
+
+        .problem.correct {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+        }
+
+        .problem.incorrect {
+            background: #ffebee;
+            border: 2px solid #f44336;
+        }
+
+        .problem-number {
+            min-width: 30px;
+            font-weight: bold;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 18px;
+            min-width: 50px;
+        }
+
+        .numerator {
+            border-bottom: 2px solid #333;
+            padding: 2px 8px;
+            font-weight: 500;
+        }
+
+        .denominator {
+            padding: 2px 8px;
+            font-weight: 500;
+        }
+
+        /* Interactive operator box styles */
+        .operator-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .operator-box {
+            width: 45px;
+            height: 45px;
+            border: 2px solid #333;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            background: white;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .operator-box:hover {
+            background: #f0f0f0;
+        }
+
+        /* Keyboard input style */
+        .operator-input {
+            width: 45px;
+            height: 45px;
+            border: 2px solid #333;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .operator-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+        }
+
+        /* Button selection style */
+        .operator-buttons {
+            display: flex;
+            gap: 3px;
+        }
+
+        .operator-btn {
+            width: 35px;
+            height: 35px;
+            border: 2px solid #333;
+            background: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.2s;
+            padding: 0;
+        }
+
+        .operator-btn:hover {
+            background: #667eea;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .operator-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Drawing canvas style */
+        .draw-canvas {
+            width: 60px;
+            height: 60px;
+            border: 2px solid #333;
+            border-radius: 5px;
+            cursor: crosshair;
+            background: white;
+        }
+
+        .canvas-controls {
+            display: flex;
+            gap: 3px;
+            margin-top: 3px;
+        }
+
+        .canvas-btn {
+            font-size: 10px;
+            padding: 3px 6px;
+            border: 1px solid #999;
+            background: white;
+            cursor: pointer;
+            border-radius: 3px;
+        }
+
+        .canvas-btn:hover {
+            background: #f0f0f0;
+        }
+
+        /* Voice input indicator */
+        .voice-indicator {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            width: 20px;
+            height: 20px;
+            background: #f44336;
+            border-radius: 50%;
+            display: none;
+            animation: pulse 1s infinite;
+        }
+
+        .voice-indicator.active {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+
+        .settings {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .settings label {
+            font-size: 14px;
+        }
+
+        .settings select {
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            margin-left: 10px;
+            width: auto;
+        }
+
+        .feedback-icon {
+            margin-left: 5px;
+            font-size: 20px;
+        }
+
+        .instructions {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            margin-top: 8px;
+        }
+
+        .voice-status {
+            margin-top: 10px;
+            padding: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        /* Print styles for A4 */
+        @media print {
+            @page {
+                size: A4;
+                margin: 15mm;
+            }
+
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+                max-width: 100%;
+            }
+
+            .controls {
+                display: none !important;
+            }
+
+            .worksheet {
+                padding: 0;
+            }
+
+            .worksheet-header {
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+
+            .score-display {
+                display: none !important;
+            }
+
+            .problem-grid {
+                gap: 12px 30px;
+            }
+
+            .problem {
+                padding: 4px;
+                page-break-inside: avoid;
+            }
+
+            .problem:hover {
+                background: none;
+            }
+
+            .operator-buttons,
+            .canvas-controls,
+            .voice-indicator {
+                display: none !important;
+            }
+
+            .feedback-icon {
+                display: none !important;
+            }
+
+            .operator-input,
+            .operator-box,
+            .draw-canvas {
+                background: white !important;
+                print-color-adjust: exact;
+                -webkit-print-color-adjust: exact;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .problem-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+
+            .settings {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <h1>🎯 Interactive Fraction Comparison Worksheet</h1>
+            <div class="button-group">
+                <button class="btn-primary" onclick="generateWorksheet()">
+                    ✨ Generate New Worksheet
+                </button>
+                <button class="btn-success" onclick="checkAnswers()">
+                    ✓ Check My Answers
+                </button>
+                <button class="btn-secondary" onclick="showAnswers()">
+                    👁️ Show Answers
+                </button>
+                <button class="btn-secondary" onclick="clearAnswers()">
+                    🔄 Clear All
+                </button>
+                <button class="btn-secondary" onclick="window.print()">
+                    🖨️ Print Worksheet
+                </button>
+            </div>
+            
+            <div class="settings">
+                <label>
+                    Input Method:
+                    <select id="inputMethod" onchange="generateWorksheet()">
+                        <option value="keyboard">⌨️ Keyboard</option>
+                        <option value="buttons" selected>🔘 Buttons</option>
+                        <option value="drawing">✏️ Drawing</option>
+                        <option value="voice">🎤 Voice</option>
+                    </select>
+                </label>
+                <label>
+                    Number of Problems:
+                    <select id="numProblems" onchange="generateWorksheet()">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="30">30</option>
+                    </select>
+                </label>
+                <label>
+                    Denominators:
+                    <select id="denomOptions" onchange="generateWorksheet()">
+                        <option value="12,20" selected>12 and 20</option>
+                        <option value="10,12,20">10, 12, and 20</option>
+                        <option value="6,8,10,12">6, 8, 10, and 12</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="instructions">
+                <strong>How to use:</strong>
+                <ul>
+                    <li><strong>Keyboard:</strong> Type &lt;, &gt;, or = directly in the boxes</li>
+                    <li><strong>Buttons:</strong> Click the &lt;, &gt;, or = button for each problem</li>
+                    <li><strong>Drawing:</strong> Draw the symbol with your mouse/finger, then click ✓</li>
+                    <li><strong>Voice:</strong> Click the microphone box and speak "less than", "greater than", or "equal"</li>
+                </ul>
+            </div>
+
+            <div class="voice-status" id="voiceStatus" style="display: none;">
+                Voice Recognition: <span id="voiceStatusText">Checking...</span>
+            </div>
+        </div>
+
+        <div class="worksheet" id="worksheet">
+            <div class="worksheet-header">
+                <h2>Fraction Comparison Worksheet</h2>
+                <p>Compare the fractions. Write &lt;, &gt;, or = in each box.</p>
+            </div>
+            <div class="score-display" id="scoreDisplay" style="display: none;">
+                Score: <span class="score-correct" id="correctCount">0</span> correct, 
+                <span class="score-incorrect" id="incorrectCount">0</span> incorrect
+            </div>
+            <div class="problem-grid" id="problemGrid">
+                <!-- Problems will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentAnswers = [];
+        let userAnswers = [];
+        let isChecked = false;
+
+        // Enhanced Speech recognition setup
+        let recognition = null;
+        let voiceSupported = false;
+
+        function initVoiceRecognition() {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            
+            if (SpeechRecognition) {
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-US';
+                recognition.maxAlternatives = 1;
+                voiceSupported = true;
+                
+                document.getElementById('voiceStatus').style.display = 'block';
+                document.getElementById('voiceStatusText').textContent = '✓ Ready';
+                document.getElementById('voiceStatusText').style.color = '#4caf50';
+            } else {
+                document.getElementById('voiceStatus').style.display = 'block';
+                document.getElementById('voiceStatusText').textContent = '✗ Not supported in this browser (Use Chrome)';
+                document.getElementById('voiceStatusText').style.color = '#f44336';
+            }
+        }
+
+        function generateWorksheet() {
+            const numProblems = parseInt(document.getElementById('numProblems').value);
+            const denomOptions = document.getElementById('denomOptions').value.split(',').map(Number);
+            const inputMethod = document.getElementById('inputMethod').value;
+            const grid = document.getElementById('problemGrid');
+            
+            grid.innerHTML = '';
+            currentAnswers = [];
+            userAnswers = new Array(numProblems).fill('');
+            isChecked = false;
+            document.getElementById('scoreDisplay').style.display = 'none';
+
+            for (let i = 0; i < numProblems; i++) {
+                const problem = generateProblem(i, denomOptions, inputMethod);
+                grid.appendChild(problem.element);
+                currentAnswers.push(problem.answer);
+            }
+        }
+
+        function generateProblem(index, denominators, inputMethod) {
+            const denom1 = denominators[Math.floor(Math.random() * denominators.length)];
+            const denom2 = denominators[Math.floor(Math.random() * denominators.length)];
+            const num1 = Math.floor(Math.random() * (denom1 - 1)) + 1;
+            const num2 = Math.floor(Math.random() * (denom2 - 1)) + 1;
+
+            const val1 = num1 / denom1;
+            const val2 = num2 / denom2;
+            let operator = '';
+            if (val1 < val2) operator = '<';
+            else if (val1 > val2) operator = '>';
+            else operator = '=';
+
+            const problemDiv = document.createElement('div');
+            problemDiv.className = 'problem';
+            problemDiv.setAttribute('data-index', index);
+            
+            let inputHTML = '';
+            
+            switch(inputMethod) {
+                case 'keyboard':
+                    inputHTML = `<input type="text" class="operator-input" maxlength="1" 
+                                 oninput="handleKeyboardInput(${index}, this.value)" 
+                                 placeholder="?">`;
+                    break;
+                    
+                case 'buttons':
+                    inputHTML = `
+                        <div class="operator-container">
+                            <div class="operator-box" id="box-${index}"></div>
+                            <div class="operator-buttons">
+                                <button class="operator-btn" onclick="selectOperator(${index}, '<')">&lt;</button>
+                                <button class="operator-btn" onclick="selectOperator(${index}, '=')">=</button>
+                                <button class="operator-btn" onclick="selectOperator(${index}, '>')">&gt;</button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'drawing':
+                    inputHTML = `
+                        <div class="operator-container">
+                            <canvas class="draw-canvas" id="canvas-${index}" 
+                                    width="60" height="60"></canvas>
+                            <div class="canvas-controls">
+                                <button class="canvas-btn" onclick="clearCanvas(${index})">Clear</button>
+                                <button class="canvas-btn" onclick="recognizeDrawing(${index})">✓ Done</button>
+                            </div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'voice':
+                    inputHTML = `
+                        <div class="operator-container">
+                            <div class="operator-box" id="box-${index}" onclick="startVoiceInput(${index})">
+                                <div class="voice-indicator" id="voice-${index}"></div>
+                                <span id="voice-text-${index}">🎤</span>
+                            </div>
+                        </div>
+                    `;
+                    break;
+            }
+
+            problemDiv.innerHTML = `
+                <span class="problem-number">${index + 1}</span>
+                <span class="fraction">
+                    <span class="numerator">${num1}</span>
+                    <span class="denominator">${denom1}</span>
+                </span>
+                ${inputHTML}
+                <span class="fraction">
+                    <span class="numerator">${num2}</span>
+                    <span class="denominator">${denom2}</span>
+                </span>
+                <span class="feedback-icon" id="feedback-${index}"></span>
+            `;
+
+            if (inputMethod === 'drawing') {
+                setTimeout(() => setupCanvas(index), 0);
+            }
+
+            return {
+                element: problemDiv,
+                answer: operator
+            };
+        }
+
+        // KEYBOARD INPUT HANDLER
+        function handleKeyboardInput(index, value) {
+            value = value.trim();
+            if (value === '<' || value === '>' || value === '=') {
+                userAnswers[index] = value;
+            } else if (value.toLowerCase() === 'l' || value === ',') {
+                userAnswers[index] = '<';
+                event.target.value = '<';
+            } else if (value.toLowerCase() === 'g' || value === '.') {
+                userAnswers[index] = '>';
+                event.target.value = '>';
+            } else if (value === '=' || value === '-') {
+                userAnswers[index] = '=';
+                event.target.value = '=';
+            }
+        }
+
+        // BUTTON SELECTION HANDLER
+        function selectOperator(index, operator) {
+            userAnswers[index] = operator;
+            const box = document.getElementById(`box-${index}`);
+            box.textContent = operator;
+            
+            const problemDiv = document.querySelector(`[data-index="${index}"]`);
+            const buttons = problemDiv.querySelectorAll('.operator-btn');
+            buttons.forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.textContent === operator) {
+                    btn.classList.add('selected');
+                }
+            });
+        }
+
+        // IMPROVED DRAWING CANVAS SETUP
+        let canvasContexts = {};
+        let isDrawing = {};
+        let strokes = {}; // Store stroke data for better recognition
+
+        function setupCanvas(index) {
+            const canvas = document.getElementById(`canvas-${index}`);
+            if (!canvas) return;
+            
+            const ctx = canvas.getContext('2d');
+            canvasContexts[index] = ctx;
+            isDrawing[index] = false;
+            strokes[index] = [];
+
+            ctx.lineWidth = 4;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.strokeStyle = '#333';
+
+            let currentStroke = [];
+
+            function getPos(e) {
+                const rect = canvas.getBoundingClientRect();
+                const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
+                const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+                return { x, y };
+            }
+
+            function startDrawing(e) {
+                e.preventDefault();
+                isDrawing[index] = true;
+                const pos = getPos(e);
+                currentStroke = [pos];
+                ctx.beginPath();
+                ctx.moveTo(pos.x, pos.y);
+            }
+
+            function draw(e) {
+                if (!isDrawing[index]) return;
+                e.preventDefault();
+                const pos = getPos(e);
+                currentStroke.push(pos);
+                ctx.lineTo(pos.x, pos.y);
+                ctx.stroke();
+            }
+
+            function stopDrawing(e) {
+                if (!isDrawing[index]) return;
+                isDrawing[index] = false;
+                if (currentStroke.length > 0) {
+                    strokes[index].push([...currentStroke]);
+                    currentStroke = [];
+                }
+            }
+
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            canvas.addEventListener('touchstart', startDrawing);
+            canvas.addEventListener('touchmove', draw);
+            canvas.addEventListener('touchend', stopDrawing);
+        }
+
+        function clearCanvas(index) {
+            const canvas = document.getElementById(`canvas-${index}`);
+            const ctx = canvasContexts[index];
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            userAnswers[index] = '';
+            strokes[index] = [];
+        }
+
+        function recognizeDrawing(index) {
+            const canvas = document.getElementById(`canvas-${index}`);
+            const ctx = canvasContexts[index];
+            
+            if (!strokes[index] || strokes[index].length === 0) {
+                alert('Please draw something first!');
+                return;
+            }
+
+            // Improved recognition algorithm
+            let allPoints = [];
+            strokes[index].forEach(stroke => {
+                allPoints = allPoints.concat(stroke);
+            });
+
+            if (allPoints.length < 5) {
+                alert('Drawing too small. Please draw larger.');
+                return;
+            }
+
+            // Calculate bounding box and features
+            let minX = Infinity, maxX = -Infinity;
+            let minY = Infinity, maxY = -Infinity;
+            
+            allPoints.forEach(p => {
+                minX = Math.min(minX, p.x);
+                maxX = Math.max(maxX, p.x);
+                minY = Math.min(minY, p.y);
+                maxY = Math.max(maxY, p.y);
+            });
+
+            const width = maxX - minX;
+            const height = maxY - minY;
+            const centerX = (minX + maxX) / 2;
+            const centerY = (minY + maxY) / 2;
+
+            // Analyze stroke directions
+            let leftWeight = 0, rightWeight = 0, horizontalWeight = 0;
+            
+            strokes[index].forEach(stroke => {
+                for (let i = 1; i < stroke.length; i++) {
+                    const dx = stroke[i].x - stroke[i-1].x;
+                    const dy = stroke[i].y - stroke[i-1].y;
+                    const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                    
+                    // Check if horizontal (for =)
+                    if (Math.abs(angle) < 20 || Math.abs(angle) > 160) {
+                        horizontalWeight += Math.abs(dx);
+                    }
+                    
+                    // Check direction (for < and >)
+                    const midPoint = stroke[Math.floor(stroke.length / 2)];
+                    if (midPoint.x < centerX) {
+                        leftWeight += Math.abs(dx) + Math.abs(dy);
+                    } else {
+                        rightWeight += Math.abs(dx) + Math.abs(dy);
+                    }
+                }
+            });
+
+            // Count strokes in different regions
+            const leftThird = canvas.width / 3;
+            const rightThird = canvas.width * 2 / 3;
+            
+            let leftPoints = 0, centerPoints = 0, rightPoints = 0;
+            allPoints.forEach(p => {
+                if (p.x < leftThird) leftPoints++;
+                else if (p.x > rightThird) rightPoints++;
+                else centerPoints++;
+            });
+
+            let recognized = '?';
+
+            // Decision logic
+            if (strokes[index].length >= 2 && horizontalWeight > width * 0.8) {
+                // Two horizontal lines = equals
+                recognized = '=';
+            } else if (leftPoints > rightPoints * 1.3) {
+                // More weight on left = less than
+                recognized = '<';
+            } else if (rightPoints > leftPoints * 1.3) {
+                // More weight on right = greater than
+                recognized = '>';
+            } else {
+                // Check the center point of the drawing
+                const avgX = allPoints.reduce((sum, p) => sum + p.x, 0) / allPoints.length;
+                if (avgX < canvas.width * 0.4) {
+                    recognized = '<';
+                } else if (avgX > canvas.width * 0.6) {
+                    recognized = '>';
+                } else {
+                    recognized = '=';
+                }
+            }
+
+            userAnswers[index] = recognized;
+            
+            // Show recognized symbol
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.font = 'bold 32px Arial';
+            ctx.fillStyle = '#667eea';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(recognized, canvas.width/2, canvas.height/2);
+            
+            strokes[index] = [];
+        }
+
+        // IMPROVED VOICE INPUT HANDLER
+        let currentVoiceIndex = null;
+
+        function startVoiceInput(index) {
+            if (!voiceSupported || !recognition) {
+                alert('Voice recognition is not supported in this browser.\nPlease use Google Chrome or Microsoft Edge.');
+                return;
+            }
+
+            const indicator = document.getElementById(`voice-${index}`);
+            const textElement = document.getElementById(`voice-text-${index}`);
+            
+            indicator.classList.add('active');
+            textElement.textContent = '🎙️';
+            textElement.style.color = '#f44336';
+            
+            currentVoiceIndex = index;
+
+            recognition.onstart = function() {
+                console.log('Voice recognition started');
+            };
+
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript.toLowerCase().trim();
+                const confidence = event.results[0][0].confidence;
+                
+                console.log('Heard:', transcript, 'Confidence:', confidence);
+                
+                let operator = '';
+
+                // More flexible recognition
+                if (transcript.includes('less') || 
+                    transcript.includes('smaller') || 
+                    transcript.includes('left') ||
+                    transcript === 'less than' ||
+                    transcript === 'smaller than') {
+                    operator = '<';
+                } else if (transcript.includes('greater') || 
+                           transcript.includes('bigger') || 
+                           transcript.includes('larger') ||
+                           transcript.includes('more') ||
+                           transcript.includes('right') ||
+                           transcript === 'greater than' ||
+                           transcript === 'bigger than') {
+                    operator = '>';
+                } else if (transcript.includes('equal') || 
+                           transcript.includes('same') ||
+                           transcript.includes('equals') ||
+                           transcript === 'equal to') {
+                    operator = '=';
+                } else {
+                    // Try to match single words
+                    if (transcript === 'less' || transcript === 'smaller') operator = '<';
+                    else if (transcript === 'greater' || transcript === 'bigger') operator = '>';
+                    else if (transcript === 'equal' || transcript === 'same') operator = '=';
+                }
+
+                if (operator) {
+                    userAnswers[currentVoiceIndex] = operator;
+                    textElement.textContent = operator;
+                    textElement.style.color = '#4caf50';
+                } else {
+                    textElement.textContent = '❓';
+                    alert('I heard: "' + transcript + '"\nPlease say: "less than", "greater than", or "equal"');
+                }
+
+                indicator.classList.remove('active');
+            };
+
+            recognition.onerror = function(event) {
+                console.error('Voice recognition error:', event.error);
+                indicator.classList.remove('active');
+                textElement.textContent = '🎤';
+                textElement.style.color = 'inherit';
+                
+                let errorMsg = 'Voice recognition error: ';
+                switch(event.error) {
+                    case 'no-speech':
+                        errorMsg += 'No speech detected. Please try again.';
+                        break;
+                    case 'audio-capture':
+                        errorMsg += 'No microphone found. Please check your microphone.';
+                        break;
+                    case 'not-allowed':
+                        errorMsg += 'Microphone permission denied. Please allow microphone access.';
+                        break;
+                    default:
+                        errorMsg += event.error;
+                }
+                alert(errorMsg);
+            };
+
+            recognition.onend = function() {
+                indicator.classList.remove('active');
+                if (textElement.textContent === '🎙️') {
+                    textElement.textContent = '🎤';
+                    textElement.style.color = 'inherit';
+                }
+            };
+
+            try {
+                recognition.start();
+            } catch (e) {
+                console.error('Failed to start recognition:', e);
+                indicator.classList.remove('active');
+                alert('Failed to start voice recognition. Please try again.');
+            }
+        }
+
+        // CHECK ANSWERS
+        function checkAnswers() {
+            isChecked = true;
+            let correct = 0;
+            let incorrect = 0;
+
+            for (let i = 0; i < currentAnswers.length; i++) {
+                const problemDiv = document.querySelector(`[data-index="${i}"]`);
+                const feedback = document.getElementById(`feedback-${i}`);
+                
+                problemDiv.classList.remove('correct', 'incorrect');
+                
+                if (userAnswers[i] === currentAnswers[i]) {
+                    problemDiv.classList.add('correct');
+                    feedback.textContent = '✓';
+                    feedback.style.color = '#4caf50';
+                    correct++;
+                } else if (userAnswers[i]) {
+                    problemDiv.classList.add('incorrect');
+                    feedback.textContent = '✗';
+                    feedback.style.color = '#f44336';
+                    incorrect++;
+                } else {
+                    feedback.textContent = '';
+                }
+            }
+
+            document.getElementById('correctCount').textContent = correct;
+            document.getElementById('incorrectCount').textContent = incorrect;
+            document.getElementById('scoreDisplay').style.display = 'block';
+        }
+
+        // SHOW ANSWERS
+        function showAnswers() {
+            const inputMethod = document.getElementById('inputMethod').value;
+            
+            for (let i = 0; i < currentAnswers.length; i++) {
+                userAnswers[i] = currentAnswers[i];
+                
+                switch(inputMethod) {
+                    case 'keyboard':
+                        const input = document.querySelector(`[data-index="${i}"] .operator-input`);
+                        if (input) input.value = currentAnswers[i];
+                        break;
+                        
+                    case 'buttons':
+                        selectOperator(i, currentAnswers[i]);
+                        break;
+                        
+                    case 'drawing':
+                        const canvas = document.getElementById(`canvas-${i}`);
+                        const ctx = canvasContexts[i];
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.font = 'bold 32px Arial';
+                        ctx.fillStyle = '#4caf50';
+                        ctx.textAlign = 'center';
+                        ctx.textBaseline = 'middle';
+                        ctx.fillText(currentAnswers[i], canvas.width/2, canvas.height/2);
+                        strokes[i] = [];
+                        break;
+                        
+                    case 'voice':
+                        const textElement = document.getElementById(`voice-text-${i}`);
+                        if (textElement) {
+                            textElement.textContent = currentAnswers[i];
+                            textElement.style.color = '#4caf50';
+                        }
+                        break;
+                }
+            }
+        }
+
+        // CLEAR ALL ANSWERS
+        function clearAnswers() {
+            const inputMethod = document.getElementById('inputMethod').value;
+            userAnswers = new Array(currentAnswers.length).fill('');
+            isChecked = false;
+            document.getElementById('scoreDisplay').style.display = 'none';
+            
+            for (let i = 0; i < currentAnswers.length; i++) {
+                const problemDiv = document.querySelector(`[data-index="${i}"]`);
+                const feedback = document.getElementById(`feedback-${i}`);
+                
+                problemDiv.classList.remove('correct', 'incorrect');
+                feedback.textContent = '';
+                
+                switch(inputMethod) {
+                    case 'keyboard':
+                        const input = document.querySelector(`[data-index="${i}"] .operator-input`);
+                        if (input) input.value = '';
+                        break;
+                        
+                    case 'buttons':
+                        const box = document.getElementById(`box-${i}`);
+                        if (box) box.textContent = '';
+                        const buttons = problemDiv.querySelectorAll('.operator-btn');
+                        buttons.forEach(btn => btn.classList.remove('selected'));
+                        break;
+                        
+                    case 'drawing':
+                        clearCanvas(i);
+                        break;
+                        
+                    case 'voice':
+                        const textElement = document.getElementById(`voice-text-${i}`);
+                        if (textElement) {
+                            textElement.textContent = '🎤';
+                            textElement.style.color = 'inherit';
+                        }
+                        break;
+                }
+            }
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            initVoiceRecognition();
+            generateWorksheet();
+        };
+    </script>
+</body>
+</html>

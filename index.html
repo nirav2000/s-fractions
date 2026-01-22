@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fraction Comparison Worksheet Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .controls {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px;
+            color: white;
+        }
+
+        .controls h1 {
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: white;
+            color: #667eea;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn-secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .worksheet {
+            padding: 40px;
+        }
+
+        .worksheet-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+
+        .worksheet-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .worksheet-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px 40px;
+        }
+
+        .problem {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .problem:hover {
+            background: #f5f5f5;
+        }
+
+        .problem-number {
+            min-width: 30px;
+            font-weight: bold;
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .fraction {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 18px;
+            min-width: 50px;
+        }
+
+        .numerator {
+            border-bottom: 2px solid #333;
+            padding: 2px 8px;
+            font-weight: 500;
+        }
+
+        .denominator {
+            padding: 2px 8px;
+            font-weight: 500;
+        }
+
+        .operator-box {
+            width: 45px;
+            height: 45px;
+            border: 2px solid #333;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .show-answers .operator-box {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+                border-radius: 0;
+            }
+
+            .controls {
+                display: none;
+            }
+
+            .problem:hover {
+                background: none;
+            }
+
+            .operator-box {
+                background: white !important;
+                color: transparent !important;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .problem-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+
+            button {
+                width: 100%;
+            }
+        }
+
+        .settings {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .settings label {
+            display: block;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+
+        .settings select {
+            padding: 8px;
+            border-radius: 5px;
+            border: none;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="controls">
+            <h1>🎯 Fraction Comparison Worksheet Generator</h1>
+            <div class="button-group">
+                <button class="btn-primary" onclick="generateWorksheet()">
+                    ✨ Generate New Worksheet
+                </button>
+                <button class="btn-secondary" onclick="toggleAnswers()">
+                    👁️ Show/Hide Answers
+                </button>
+                <button class="btn-secondary" onclick="window.print()">
+                    🖨️ Print Worksheet
+                </button>
+                <button class="btn-secondary" onclick="downloadPDF()">
+                    📄 Download PDF
+                </button>
+            </div>
+            
+            <div class="settings">
+                <label>
+                    Number of Problems:
+                    <select id="numProblems" onchange="generateWorksheet()">
+                        <option value="10">10</option>
+                        <option value="20" selected>20</option>
+                        <option value="30">30</option>
+                        <option value="40">40</option>
+                    </select>
+                </label>
+                <label>
+                    Denominators:
+                    <select id="denomOptions" onchange="generateWorksheet()">
+                        <option value="12,20" selected>12 and 20</option>
+                        <option value="10,12,20">10, 12, and 20</option>
+                        <option value="6,8,10,12">6, 8, 10, and 12</option>
+                        <option value="2,3,4,5,6,8,10,12">All (2-12)</option>
+                    </select>
+                </label>
+            </div>
+        </div>
+
+        <div class="worksheet" id="worksheet">
+            <div class="worksheet-header">
+                <h2>Fraction Comparison Worksheet</h2>
+                <p>Compare the fractions. Write &lt;, &gt;, or = in each box.</p>
+            </div>
+            <div class="problem-grid" id="problemGrid">
+                <!-- Problems will be generated here -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+        let currentAnswers = [];
+
+        function generateWorksheet() {
+            const numProblems = parseInt(document.getElementById('numProblems').value);
+            const denomOptions = document.getElementById('denomOptions').value.split(',').map(Number);
+            const grid = document.getElementById('problemGrid');
+            
+            grid.innerHTML = '';
+            currentAnswers = [];
+
+            for (let i = 0; i < numProblems; i++) {
+                const problem = generateProblem(i + 1, denomOptions);
+                grid.appendChild(problem.element);
+                currentAnswers.push(problem.answer);
+            }
+        }
+
+        function generateProblem(number, denominators) {
+            // Generate random fractions
+            const denom1 = denominators[Math.floor(Math.random() * denominators.length)];
+            const denom2 = denominators[Math.floor(Math.random() * denominators.length)];
+            const num1 = Math.floor(Math.random() * (denom1 - 1)) + 1;
+            const num2 = Math.floor(Math.random() * (denom2 - 1)) + 1;
+
+            // Calculate comparison
+            const val1 = num1 / denom1;
+            const val2 = num2 / denom2;
+            let operator = '';
+            if (val1 < val2) operator = '<';
+            else if (val1 > val2) operator = '>';
+            else operator = '=';
+
+            // Create problem element
+            const problemDiv = document.createElement('div');
+            problemDiv.className = 'problem';
+            problemDiv.innerHTML = `
+                <span class="problem-number">${number}</span>
+                <span class="fraction">
+                    <span class="numerator">${num1}</span>
+                    <span class="denominator">${denom1}</span>
+                </span>
+                <span class="operator-box" data-answer="${operator}"></span>
+                <span class="fraction">
+                    <span class="numerator">${num2}</span>
+                    <span class="denominator">${denom2}</span>
+                </span>
+            `;
+
+            return {
+                element: problemDiv,
+                answer: operator
+            };
+        }
+
+        function toggleAnswers() {
+            const worksheet = document.getElementById('worksheet');
+            const boxes = document.querySelectorAll('.operator-box');
+            
+            if (worksheet.classList.contains('show-answers')) {
+                worksheet.classList.remove('show-answers');
+                boxes.forEach(box => box.textContent = '');
+            } else {
+                worksheet.classList.add('show-answers');
+                boxes.forEach(box => {
+                    box.textContent = box.dataset.answer;
+                });
+            }
+        }
+
+        function downloadPDF() {
+            const element = document.getElementById('worksheet');
+            const opt = {
+                margin: 10,
+                filename: 'fraction_comparison_worksheet.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2 },
+                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+            };
+
+            // Hide answers before downloading
+            const worksheet = document.getElementById('worksheet');
+            const wasShowingAnswers = worksheet.classList.contains('show-answers');
+            if (wasShowingAnswers) {
+                toggleAnswers();
+            }
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                if (wasShowingAnswers) {
+                    toggleAnswers();
+                }
+            });
+        }
+
+        // Generate initial worksheet on page load
+        window.onload = generateWorksheet;
+    </script>
+</body>
+</html>
